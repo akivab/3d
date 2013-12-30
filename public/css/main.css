@@ -1,31 +1,67 @@
-* {
-  box-sizing: border-box;
+.site-header {
+  padding: 20px;
+  background-color: #F1F1F1;
+  border-bottom: 1px solid #DDD;
 }
-
-h1 {
-  padding: 10px 40px;
+.site-header .logo {
+  margin: 0;
   text-align: center;
+  text-transform: lowercase;
+  color: #999;
+  font-size: 2em;
+  font-weight: 200;
 }
 
 .moment-holder {
-  width: 75%;
-  max-width: 800px;
-  margin: 5em auto;
+  width: 40%;
+  max-width: 650px;
+  margin: 1em auto;
 }
 
 .moment {
   margin: 0 0 2em;
 }
 
-.perspective {
-  margin: 0 2% 0 0;
+.perspective-holder {
+  overflow: hidden;
+}
+
+.perspective.primary {
+  margin-top: .25em;
+}
+.perspective.secondary {
+  position: relative;
+  margin: 0 1% 0 0;
+  float: left;
 }
 .perspective:last-child {
   margin-right: 0;
 }
 .of2 .perspective {
-  width: 49%;
+  width: 49.5%;
 }
 .of3 .perspective {
-  width: 32%;
+  width: 32.6%;
+}
+
+.perspective video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.perspective-username {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 10px 4px 6px 4px;
+  font-size: 1em;
+  font-weight: normal;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(transparent), to(rgba(0,0,0,0.75)));
+  background-image: -webkit-linear-gradient(transparent, rgba(0,0,0,0.75));
+  background-image: linear-gradient(transparent, rgba(0,0,0,0.75));
 }
