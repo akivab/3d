@@ -22,8 +22,22 @@ app.locals.pretty = true;
 app.use(express.logger('dev'));
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
+var MOCK_PERSPECTIVES = [
+  { filepath: "/uploads/movie1.mov", username: "Danny", location: "Tel Aviv", timestamp: "2 hrs" },
+  { filepath: "/uploads/movie2.mov", username: "Andy", location: "New York", timestamp: "3 hrs" },
+  { filepath: "/uploads/movie2.mov", username: "Akiva", location: "San Francisco", timestamp: "4 hrs" },
+]
+
+function getPerspectives() {
+  return MOCK_PERSPECTIVES;
+}
+
+var perspectives = getPerspectives();
+
 app.get('/', function(req, res){
-  res.render('home');
+  res.render('home', {
+    perspective: getPerspectives(),
+  });
 });
 
 app.post('/upload', function(req, res) {
