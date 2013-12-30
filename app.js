@@ -3,7 +3,6 @@ var express = require('express'),
     exphbs  = require('express3-handlebars'),
     fs = require('fs'),
     path = require('path'),
-    sys = require('sys'),
     app = express();
 
 // Basic config
@@ -43,26 +42,26 @@ app.get('/', function(req, res){
 });
 
 app.post('/upload', function(req, res) {
-  console.log('body:');
-  console.log(req.body);
-  console.log('files:');
-  console.log(req.files);
-  // console.log(req.rawBody);
-  var folderName = 'public/uploads';
-  
-  var timestamp = req.body.timestamp;
-  var lat = req.body.lat;
-  var lng = req.body.long;
+  console.log('body:', req.body, 'files:', req.files);
 
+  var folderName = 'public/uploads';
+  var timestamp = req.body.timestamp;
   var fileName = 'movie-' + timestamp.replace(/\./g, '') + '.mov';
 
 
   fs.mkdir(folderName, function(err){});
   fs.readFile(req.files.video.path, function (err, data) {
-    var newPath = __dirname + '/' + folderName + '/' + fileName;
-    fs.writeFile(newPath, data, function (err) {});
+    var newPath = [__dirname, folderName, fileName].join('/');
+    fs.writeFile(newPath, data, function (err) {
+      if (err) {
+        console.log(err);
+      }
+    });
   });
-  res.send('done.');
+
+  res.writeHead(200, {"Content-Type": "application/json"});
+  res.write('');
+  res.end();
 });
 
 app.listen(3000);
