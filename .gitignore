@@ -6,6 +6,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.mov
+*.MOV
 
 pids
 logs
@@ -13,4 +15,8 @@ results
 build
 
 node_modules/*
+<<<<<<< HEAD
 public/uploads/*
+=======
+.DS_Store
+>>>>>>> feaf833c7c0f23c81fa1d0dfdc2b3301c0f795a1
