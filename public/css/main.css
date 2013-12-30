@@ -6,3 +6,26 @@ h1 {
   padding: 10px 40px;
   text-align: center;
 }
+
+.moment-holder {
+  width: 75%;
+  max-width: 800px;
+  margin: 5em auto;
+}
+
+.moment {
+  margin: 0 0 2em;
+}
+
+.perspective {
+  margin: 0 2% 0 0;
+}
+.perspective:last-child {
+  margin-right: 0;
+}
+.of2 .perspective {
+  width: 49%;
+}
+.of3 .perspective {
+  width: 32%;
+}

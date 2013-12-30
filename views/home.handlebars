@@ -1,23 +1,25 @@
 <h1>Cyber Gate: It's da best!</h1>
 
-<section class="moment">
-  <div class="perspective-holder">
-    {{#each perspective}}
-    <div class="perspective secondary" data-index="{{@index}}" data-filepath="{{ this.filepath }}" data-location="{{ this.location }}" data-timestamp="{{ this.timestamp }}">
-      <video src="{{ this.filepath }}"></video>
-      <h2>{{ this.username }}</h2>
+<div class="moment-holder">
+  <section class="moment">
+    <div class="perspective-holder of{{ numPerspectives }}">
+      {{#each perspectives}}
+      <div class="perspective secondary" data-index="{{ @index }}" data-filepath="{{ this.filepath }}" data-location="{{ this.location }}" data-timestamp="{{ this.timestamp }}">
+        <video src="{{ this.filepath }}"></video>
+        <h2>{{ this.username }}</h2>
+      </div>
+      {{/each}}
     </div>
-    {{/each}}
-  </div>
-  <div class="perspective primary">
-    <video controls></video>
-  </div>
-  <div class="controls">
+    <div class="perspective primary">
+      <video controls></video>
+    </div>
+    <div class="controls">
 
-  </div>
-  <div class="map-view"></div>
-  <div class="metadata">
-    <span class="location"></span>
-    <span class="timestamp"></span>
-  </div>
-</section>
+    </div>
+    <div class="map-view"></div>
+    <div class="metadata">
+      <span class="location"></span>
+      <span class="timestamp"></span>
+    </div>
+  </section>
+</div>

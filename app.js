@@ -33,11 +33,12 @@ function getPerspectives() {
   return MOCK_PERSPECTIVES;
 }
 
-var perspectives = getPerspectives();
-
 app.get('/', function(req, res){
+  var currPerspectives = getPerspectives();
+  console.log(currPerspectives);
   res.render('home', {
-    perspective: getPerspectives(),
+    perspectives: currPerspectives,
+    numPerspectives: currPerspectives.length
   });
 });
 
