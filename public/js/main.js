@@ -1,11 +1,12 @@
 console.log('I love Israel!');
 
 $(document).ready(function () {
-        var $mainVideo = $(".perspective primary");
-        var videos = $(".perspective secondary");
-        var percentComplete = 0;
-        
-        //$mainVideo.bind("play", videoPlayHandler);
+        var $mainVideo = $(".perspective.primary video");
+        var videos = $(".perspective.secondary video");
+        var previousTime = 0;
+        var isPlaying = false;
+
+        $mainVideo.bind("play", videoPlayHandler);
         $mainVideo.bind("pause", videoPauseHandler);
         $mainVideo.bind("canplay", videoSwitchHandler);
         $mainVideo.bind("seeked", videoSeekedHandler);
@@ -13,64 +14,61 @@ $(document).ready(function () {
         //$mainVideo.bind("timeupdate", videoTimedUpdateHandler);
 
         $(".perspective-holder").on("click","video", function() {
-          var sources = this.getElementsByTagName('source');
-          changevideo(sources[0].src);
+          changevideo(this.src);
         });
 
-        function updateVideoTime(percent) {
+        function updateVideoTime(currentTime) {
           for (var i = 0; i < videos.length; i++) {
-            var video = videos[i].get(0);
-            video.currentTime = percent * video.duration;
+            var video = videos[i];
+            video.currentTime = currentTime;
           }
         }
 
         function videoPlayHandler(e) {
             var mainVideo = $mainVideo.get(0);
-            var percent = mainVideo.currentTime / mainVideo.duration;
-            updateVideoTime(percent);
+            updateVideoTime(mainVideo.currentTime);
             for (var i = 0; i < videos.length; i++) {
-              var video = videos[i].get(0);
+              var video = videos[i];
               video.play();
             }
+            isPlaying = true;
         }
 
         function videoPauseHandler(e) {
             for (var i = 0; i < videos.length; i++) {
-              var video = videos[i].get(0);
+              var video = videos[i];
               video.pause();
             }
         }
 
         function changevideo(video) { 
             var mainVideo = $mainVideo.get(0);
-            percentComplete = mainVideo.currentTime / mainVideo.duration;
+            previousTime = mainVideo.currentTime;
             mainVideo.src = video;
         }
 
         function videoSwitchHandler()
         {
             var mainVideo = $mainVideo.get(0);
-            mainVideo.currentTime = percentComplete * mainVideo.duration;
+            mainVideo.currentTime = previousTime;
             mainVideo.play();
-            updateVideoTime(percentComplete);
+            updateVideoTime(previousTime);
         }
 
         function videoSeekedHandler()
         {
             var mainVideo = $mainVideo.get(0);
-            var percent = mainVideo.currentTime / mainVideo.duration;
-            updateVideoTime(percent);
+            updateVideoTime(mainVideo.currentTime);
         }
 
         function videoTimedUpdateHandler()
         {
             var mainVideo = $mainVideo.get(0);
-            var percent = mainVideo.currentTime / mainVideo.duration;
-            updateVideoTime(percent);
+            updateVideoTime(mainVideo.currentTime);
         }
 
         function videoEndedHandler() 
         {
-            alert("Ended");
+           // alert("Ended");
         }
     });
