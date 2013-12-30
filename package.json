@@ -4,6 +4,8 @@
         "start": "node app.js"
     },
     "dependencies": {
-        "express": "*"
+        "express": "*",
+        "express3-handlebars": "*",
+        "underscore": "*"
     }
 }
