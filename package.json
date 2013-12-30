@@ -1,0 +1,9 @@
+{
+    "name": "3d",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "express": "*"
+    }
+}
