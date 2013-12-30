@@ -22,41 +22,69 @@ app.locals.pretty = true;
 app.use(express.logger('dev'));
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
-var MOCK_PERSPECTIVES = [
-  { filepath: "/uploads/movie1.mov", username: "Danny", location: "Tel Aviv", timestamp: "2 hrs" },
-  { filepath: "/uploads/movie2.mov", username: "Andy", location: "New York", timestamp: "3 hrs" },
-  { filepath: "/uploads/movie2.mov", username: "Akiva", location: "San Francisco", timestamp: "4 hrs" },
-]
+var FOLDER_NAME = 'public/uploads';
+var META_FILE_NAME = [FOLDER_NAME, '.meta'].join('/');
 
-function getPerspectives() {
-  return MOCK_PERSPECTIVES;
+function GetPerspectives() {
+  try {
+    var fileData = fs.readFileSync(META_FILE_NAME);
+    return JSON.parse(fileData);
+  } catch (e) {
+    console.log(e);
+    return;
+  } 
 }
 
-var perspectives = getPerspectives();
+function WriteMeta(user, timestamp, fileName) {
+  var data;
+  try {
+    data = fs.readFileSync(META_FILE_NAME);
+  } catch (e) {
+    console.log('No .meta file. Creating.');
+  }
+  var json;
+  var url = '/uploads';
+  var info = {
+    username: user,
+    location: 'Tel Aviv',
+    timestamp: timestamp,
+    filepath: [url, fileName].join('/')
+  };
+
+  if (data) {
+    json = JSON.parse(data);
+    json.push(info);
+  } else {
+    json = [info];
+  }
+
+  fs.writeFileSync(META_FILE_NAME, JSON.stringify(json));
+}
+
+var perspectives = GetPerspectives();
 
 app.get('/', function(req, res){
   res.render('home', {
-    perspective: getPerspectives(),
+    perspective: GetPerspectives(),
   });
 });
 
 app.post('/upload', function(req, res) {
   console.log('body:', req.body, 'files:', req.files);
 
-  var folderName = 'public/uploads';
-  var timestamp = req.body.timestamp;
+  var timestamp = req.body.timestamp || '0';
   var fileName = 'movie-' + timestamp.replace(/\./g, '') + '.mov';
 
+  WriteMeta(req.body.user, timestamp, fileName);
 
-  fs.mkdir(folderName, function(err){});
-  fs.readFile(req.files.video.path, function (err, data) {
-    var newPath = [__dirname, folderName, fileName].join('/');
-    fs.writeFile(newPath, data, function (err) {
-      if (err) {
-        console.log(err);
-      }
-    });
-  });
+  try {
+    fs.mkdirSync(FOLDER_NAME);
+  } catch (e) {
+    console.log('Could not mkdir', FOLDER_NAME);
+  }
+  var data = fs.readFileSync(req.files.video.path);
+  var newPath = [__dirname, FOLDER_NAME, fileName].join('/');
+  fs.writeFile(newPath, data);
 
   res.writeHead(200, {"Content-Type": "application/json"});
   res.write('');
