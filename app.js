@@ -61,11 +61,12 @@ function WriteMeta(user, timestamp, fileName) {
   fs.writeFileSync(META_FILE_NAME, JSON.stringify(json));
 }
 
-var perspectives = GetPerspectives();
-
 app.get('/', function(req, res){
+  var currPerspectives = GetPerspectives();
+  console.log(currPerspectives);
   res.render('home', {
-    perspective: GetPerspectives(),
+    perspectives: currPerspectives,
+    numPerspectives: currPerspectives.length
   });
 });
 
