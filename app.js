@@ -25,17 +25,17 @@ app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 var FOLDER_NAME = 'public/uploads';
 var META_FILE_NAME = [FOLDER_NAME, '.meta'].join('/');
 
-function GetPerspectives() {
+function getPerspectives() {
   try {
     var fileData = fs.readFileSync(META_FILE_NAME);
     return JSON.parse(fileData);
   } catch (e) {
     console.log(e);
     return;
-  } 
+  }
 }
 
-function WriteMeta(user, timestamp, fileName) {
+function writeMeta(user, timestamp, fileName) {
   var data;
   try {
     data = fs.readFileSync(META_FILE_NAME);
@@ -62,7 +62,7 @@ function WriteMeta(user, timestamp, fileName) {
 }
 
 app.get('/', function(req, res){
-  var currPerspectives = GetPerspectives();
+  var currPerspectives = getPerspectives();
   console.log(currPerspectives);
   res.render('home', {
     perspectives: currPerspectives,
@@ -76,7 +76,7 @@ app.post('/upload', function(req, res) {
   var timestamp = req.body.timestamp || '0';
   var fileName = 'movie-' + timestamp.replace(/\./g, '') + '.mov';
 
-  WriteMeta(req.body.user, timestamp, fileName);
+  writeMeta(req.body.user, timestamp, fileName);
 
   try {
     fs.mkdirSync(FOLDER_NAME);
