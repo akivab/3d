@@ -25,15 +25,15 @@ app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 var FOLDER_NAME = 'public/uploads';
 var META_FILE_NAME = [FOLDER_NAME, '.meta'].join('/');
 
-function GetPerspectives() {
-  try {
-    var fileData = fs.readFileSync(META_FILE_NAME);
-    return JSON.parse(fileData);
-  } catch (e) {
-    console.log(e);
-    return;
-  } 
-}
+// function getPerspectives() {
+//   try {
+//     var fileData = fs.readFileSync(META_FILE_NAME);
+//     return JSON.parse(fileData);
+//   } catch (e) {
+//     console.log(e);
+//     return;
+//   }
+// }
 
 function WriteMeta(user, timestamp, fileName) {
   var data;
@@ -61,11 +61,21 @@ function WriteMeta(user, timestamp, fileName) {
   fs.writeFileSync(META_FILE_NAME, JSON.stringify(json));
 }
 
-var perspectives = GetPerspectives();
+var MOCK_PERSPECTIVES = [
+  { filepath: "/uploads/movie1.mov", username: "Danny", location: "Tel Aviv", timestamp: "2 hrs" },
+  { filepath: "/uploads/movie2.mov", username: "Andy", location: "New York", timestamp: "3 hrs" }
+]
+
+function getPerspectives() {
+  return MOCK_PERSPECTIVES;
+}
 
 app.get('/', function(req, res){
+  var currPerspectives = getPerspectives();
+  console.log(currPerspectives);
   res.render('home', {
-    perspective: GetPerspectives(),
+    perspectives: currPerspectives,
+    numPerspectives: currPerspectives.length
   });
 });
 
