@@ -69,6 +69,7 @@ $(function () {
   });
 
   // Start the things
+  $secondaryPerspectives = $('.perspective.secondary').first().addClass('playing');
   mainVideo.src = secondarySources[0];
   mainVideo.load();
 });
