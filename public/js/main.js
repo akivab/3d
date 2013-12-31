@@ -1,74 +1,74 @@
-console.log('I love Israel!');
+$(function () {
+  var $firstMoment = $('.moment').first();
 
-$(document).ready(function () {
-        var $mainVideo = $(".perspective.primary video");
-        var videos = $(".perspective.secondary video");
-        var previousTime = 0;
-        var isPlaying = false;
+  var $mainPerspective = $('.perspective.primary:first'),
+      $mainVideo = $mainPerspective.find('video');
+      mainVideo = $mainVideo.get(0);
 
-        $mainVideo.bind("play", videoPlayHandler);
-        $mainVideo.bind("pause", videoPauseHandler);
-        $mainVideo.bind("canplay", videoSwitchHandler);
-        $mainVideo.bind("seeked", videoSeekedHandler);
-        $mainVideo.bind("ended", videoEndedHandler);
-        //$mainVideo.bind("timeupdate", videoTimedUpdateHandler);
+  var $secondaryPerspectives = $('.perspective.secondary'),
+      $secondaryVideos = $secondaryPerspectives.find('video'),
+      secondarySources = $secondaryVideos.map(function () { return this.src; });
 
-        $(".perspective-holder").on("click","video", function() {
-          changevideo(this.src);
-        });
+  var newSeekTime = 0;
 
-        function updateVideoTime(currentTime) {
-          for (var i = 0; i < videos.length; i++) {
-            var video = videos[i];
-            video.currentTime = currentTime;
-          }
-        }
+  $firstMoment.on('click', '.perspective.secondary', function (e) {
+    var clickedVideo = $(this).find('video').get(0);
+    newSeekTime = clickedVideo.currentTime;
 
-        function videoPlayHandler(e) {
-            var mainVideo = $mainVideo.get(0);
-            updateVideoTime(mainVideo.currentTime);
-            for (var i = 0; i < videos.length; i++) {
-              var video = videos[i];
-              video.play();
-            }
-            isPlaying = true;
-        }
+    $secondaryPerspectives.removeClass('playing');
+    $(this).addClass('playing');
 
-        function videoPauseHandler(e) {
-            for (var i = 0; i < videos.length; i++) {
-              var video = videos[i];
-              video.pause();
-            }
-        }
+    mainVideo.src = clickedVideo.src;
+    mainVideo.load();
+  });
 
-        function changevideo(video) { 
-            var mainVideo = $mainVideo.get(0);
-            previousTime = mainVideo.currentTime;
-            mainVideo.src = video;
-        }
+  $firstMoment.on('click', '.perspective.primary', function (e) {
+    var clickedVideo = $(this).find('video').get(0);
 
-        function videoSwitchHandler()
-        {
-            var mainVideo = $mainVideo.get(0);
-            mainVideo.currentTime = previousTime;
-            mainVideo.play();
-            updateVideoTime(previousTime);
-        }
+    if (clickedVideo.paused) {
+      clickedVideo.play();
+    } else {
+      clickedVideo.pause();
+    }
+  });
 
-        function videoSeekedHandler()
-        {
-            var mainVideo = $mainVideo.get(0);
-            updateVideoTime(mainVideo.currentTime);
-        }
+  $mainVideo.on('error', 'video', function (e) {
+    console.log('There was an error: ', e);
+  });
 
-        function videoTimedUpdateHandler()
-        {
-            var mainVideo = $mainVideo.get(0);
-            updateVideoTime(mainVideo.currentTime);
-        }
+  $mainVideo.on('canplay', function (e) {
+    console.log('canplay', e);
 
-        function videoEndedHandler() 
-        {
-           // alert("Ended");
-        }
+    if (newSeekTime) {
+      this.currentTime = newSeekTime;
+    }
+    this.play();
+  });
+
+  $mainVideo.on('playing', function (e) {
+    console.log('playing', e);
+    var elapsedTime = this.currentTime;
+
+    $secondaryVideos.each(function () {
+      this.currentTime = elapsedTime;
+      this.play();
     });
+  });
+
+  $mainVideo.on('pause', function (e) {
+    console.log('pause', e);
+    $secondaryVideos.each(function () {
+      this.pause();
+    });
+  });
+
+  $mainVideo.on('ended', function (e) {
+    console.log('ended', e);
+    this.currentTime = 0;
+    this.play();
+  });
+
+  // Start the things
+  mainVideo.src = secondarySources[0];
+  mainVideo.load();
+});

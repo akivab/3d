@@ -24,8 +24,7 @@ app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 
 var MOCK_PERSPECTIVES = [
   { filepath: "/uploads/movie1.mov", username: "Danny", location: "Tel Aviv", timestamp: "2 hrs" },
-  { filepath: "/uploads/movie2.mov", username: "Andy", location: "New York", timestamp: "3 hrs" },
-  { filepath: "/uploads/movie3.mov", username: "Akiva", location: "San Francisco", timestamp: "4 hrs" },
+  { filepath: "/uploads/movie2.mov", username: "Andy", location: "New York", timestamp: "3 hrs" }
 ]
 
 function getPerspectives() {
