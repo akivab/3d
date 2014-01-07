@@ -5,21 +5,47 @@ $(function () {
       $mainVideo = $mainPerspective.find('video');
       mainVideo = $mainVideo.get(0);
 
+  var mainVideoIndex = 0;
+
   var $secondaryPerspectives = $('.perspective.secondary'),
       $secondaryVideos = $secondaryPerspectives.find('video'),
       secondarySources = $secondaryVideos.map(function () { return this.src; });
 
-  var newSeekTime = 0;
+  function reset() {
+    var durations = $secondaryVideos.map(function () { return this.duration  });
+    var starttimes = $secondaryPerspectives.map(function() { return $(this).data('starttime') / 1000; });
+
+    var latestStart = starttimes[0];
+    for (var i = 1; i < starttimes.length; ++i) {
+      if (starttimes[i] > latestStart) latestStart = starttimes[i];
+    }
+
+    $secondaryVideos.map(function(i) {
+      var newStart = starttimes[i];
+      var timeDiff = latestStart - newStart;
+      if (timeDiff > durations[i])
+        return;
+
+      this.play();
+      if (i === mainVideoIndex) {
+        mainVideo.currentTime = timeDiff;
+      }
+      
+      this.currentTime = timeDiff;
+
+      console.log('Video stuff', this.currentTime, timeDiff, newStart, durations[i], starttimes[i]);
+    });
+  }
 
   $firstMoment.on('click', '.perspective.secondary', function (e) {
     var clickedVideo = $(this).find('video').get(0);
-    newSeekTime = clickedVideo.currentTime;
-
     $secondaryPerspectives.removeClass('playing');
     $(this).addClass('playing');
 
+    mainVideoIndex = $(this).data('index');
     mainVideo.src = clickedVideo.src;
     mainVideo.load();
+    setTimeout(reset, 100);
   });
 
   $firstMoment.on('click', '.perspective.primary', function (e) {
@@ -39,20 +65,18 @@ $(function () {
   $mainVideo.on('canplay', function (e) {
     console.log('canplay', e);
 
-    if (newSeekTime) {
-      this.currentTime = newSeekTime;
-    }
     this.play();
   });
 
   $mainVideo.on('playing', function (e) {
     console.log('playing', e);
-    var elapsedTime = this.currentTime;
+    // var elapsedTime = this.currentTime;
 
     $secondaryVideos.each(function () {
-      this.currentTime = elapsedTime;
+      // this.currentTime = elapsedTime;
       this.play();
     });
+    setTimeout(reset, 100);
   });
 
   $mainVideo.on('pause', function (e) {
@@ -69,7 +93,6 @@ $(function () {
   });
 
   // Start the things
-  $secondaryPerspectives = $('.perspective.secondary').first().addClass('playing');
   mainVideo.src = secondarySources[0];
   mainVideo.load();
 });

@@ -28,14 +28,15 @@ var META_FILE_NAME = [FOLDER_NAME, '.meta'].join('/');
 function getPerspectives() {
   try {
     var fileData = fs.readFileSync(META_FILE_NAME);
-    return JSON.parse(fileData);
+    var arr = JSON.parse(fileData);
+    return arr;
   } catch (e) {
-    console.log(e);
+    console.log('Found an error:', e);
     return;
   }
 }
 
-function writeMeta(user, timestamp, fileName) {
+function writeMeta(user, starttime, duration, fileName) {
   var data;
   try {
     data = fs.readFileSync(META_FILE_NAME);
@@ -47,7 +48,8 @@ function writeMeta(user, timestamp, fileName) {
   var info = {
     username: user,
     location: 'Tel Aviv',
-    timestamp: timestamp,
+    duration: duration,
+    starttime: starttime,
     filepath: [url, fileName].join('/')
   };
 
@@ -61,9 +63,33 @@ function writeMeta(user, timestamp, fileName) {
   fs.writeFileSync(META_FILE_NAME, JSON.stringify(json));
 }
 
+function generateId() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+  };
+
+  function guid() {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+  }
+
+  return guid();
+}
+
 app.get('/', function(req, res){
   var currPerspectives = getPerspectives();
-  console.log(currPerspectives);
+  console.log('Current perspectives:', currPerspectives.length);
+  if (!currPerspectives)
+    currPerspectives = [];
+  if (req.query.start && req.query.end) {
+    var start = parseInt(req.query.start);
+    var end = parseInt(req.query.end);
+    currPerspectives = currPerspectives.slice(start, end);
+  } else {
+    currPerspectives = currPerspectives.slice(currPerspectives.length - 3);
+  }
   res.render('home', {
     perspectives: currPerspectives,
     numPerspectives: currPerspectives.length
@@ -73,10 +99,10 @@ app.get('/', function(req, res){
 app.post('/upload', function(req, res) {
   console.log('body:', req.body, 'files:', req.files);
 
-  var timestamp = req.body.timestamp || '0';
-  var fileName = 'movie-' + timestamp.replace(/\./g, '') + '.mov';
+  var fileName = 'movie-' + generateId() + '.mov';
 
-  writeMeta(req.body.user, timestamp, fileName);
+  var duration = req.body.endtime - req.body.starttime;
+  writeMeta(req.body.user, req.body.starttime, duration, fileName);
 
   try {
     fs.mkdirSync(FOLDER_NAME);

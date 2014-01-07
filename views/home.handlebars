@@ -2,7 +2,7 @@
   <section class="moment">
     <div class="perspective-holder of{{ numPerspectives }}">
       {{#each perspectives}}
-      <div class="perspective secondary" data-index="{{ @index }}" data-filepath="{{ this.filepath }}" data-location="{{ this.location }}" data-timestamp="{{ this.timestamp }}">
+      <div class="perspective secondary" data-index="{{ @index }}" data-filepath="{{ this.filepath }}" data-location="{{ this.location }}" data-starttime="{{ this.starttime }}" data-duration="{{ this.duration }}">
         <div class="play-overlay"> <span class="glyphicon glyphicon-play"></span></div>
         <video src="{{ this.filepath }}" preload="metadata" muted></video>
         <h2 class="perspective-username">{{ this.username }}</h2>
